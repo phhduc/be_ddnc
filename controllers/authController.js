@@ -1,5 +1,4 @@
 const User = require('../model/user')
-const brcypt = require('brcypt')
 const jwt = require('jsonwebtoken')
 
 const authCtrl = {
@@ -9,11 +8,11 @@ const authCtrl = {
             const user_name = await User.findOne({username: username})
             if(user_name) return res.status(400).json({msg: "username da ton tai"})
             if(password.length < 6) return res.status(400).json({msg: 'password qua ngan'})
-            const passHashed = await brcypt.hash(password, 2)
             const newUser  = new User({
                 fullname,
                 username,
-                password: passHashed,
+                password,
+                email,
                 gender
             })
             const access_token = createAccessToken({id : newUser._id})
@@ -40,8 +39,7 @@ const authCtrl = {
       const {username, password} = req.body;
       const loginUser = await User.findOne({username: username})
       if(!loginUser) return res.status(400).json({msg: 'tai khoan khong ton tai'})
-      const passHashed = brcypt(password, 2)
-      if(passHashed !== loginUser.password) return res.status(400).json({msg: 'sai mat khau'})
+      if(password !== loginUser.password) return res.status(400).json({msg: 'sai mat khau'})
       const access_token = createAccessToken({id: loginUser._id})
       const refreshtoken = createRefreshToken({id: loginUser._id})
       res.cookie('refreshtoken', refreshtoken, {

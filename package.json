@@ -12,7 +12,6 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.20.0",
-    "brcypt": "^1.0.1",
     "config": "^3.3.7",
     "cookie-parse": "^0.4.0",
     "cookie-parser": "^1.4.6",

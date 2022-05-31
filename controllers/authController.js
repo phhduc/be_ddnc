@@ -61,6 +61,32 @@ const authCtrl = {
     } catch(error) {
       return res.status(500).json({msg: error.message})
     }
+  },
+  logout: async (_, res) =>{
+    try{
+      res.clearCookie('refresh_token', {path: '/api/refresh_token'})
+      return res.json({msg: "da dang xuat"})
+    } catch(err){
+      return res.status(500).json({msg: err.message})
+    }
+  },
+  generateAccessToken: async(req, res) =>{
+    try{
+      const rf_token = req.cookies.refreshtoken;
+      if(!rf_token) return res.status(400).json({msg: "vui long dag nhap"})
+      jwt.verify(rf_token, process.env.REFRESH_TOKEN, async (err, result) =>{
+        if (err) return res.status(400).json({msg: "vui long dang nhap"})
+        const user = await User.findById(result.id).select('-password')
+        if(!user) return res.status(400).json({mgs: 'nguoi dung khong ton tai'})
+        const access_token = createAccessToken({id: user._id})
+        return res.json({
+          access_token,
+          user
+        })
+      })
+    } catch(err) {
+      return res.status(500).json({msg: err.message})
+    }
   }
 }
 const createAccessToken =(payload) => {

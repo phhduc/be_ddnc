@@ -23,9 +23,10 @@ err =>{
   console.log('connected to db')
 })
 
-app.get('/checkapi', (req, res)=>{
+app.get('/checkapi', (_, res)=>{
   return res.send('OK')
 })
+app.use('/api', require('./routes/authRoutes'))
 
 app.listen(PORT, () =>{
   console.log("server is running")
